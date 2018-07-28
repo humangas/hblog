@@ -1,0 +1,77 @@
+vendor/
+dist/
+hblog
+
+### https://raw.github.com/github/gitignore/d67d1cae9a6d1804851a816b15460600eea29a45/humangas.gitignore
+
+## humangas gitignore
+
+# Temporary Files
+#---------------------------
+tmp/
+*.swp
+
+# Backup files
+#---------------------------
+*.bak
+_bak/
+*.bk
+*.orig
+*~
+*.old
+old/
+_old/
+
+# OS dependent files
+#---------------------------
+.DS_Store
+Thumbs.db
+
+# Key files
+#---------------------------
+*.pem
+*.pem.pub
+id_rsa
+id_rsa.pub
+.envrc
+
+# No upload files
+#---------------------------
+*.xls*
+*.xlk
+*.doc*
+*.ppt*
+~$*
+
+# IDE files
+#---------------------------
+.project
+.settings/
+
+# HashiCorp
+#---------------------------
+*.tfstate
+*.backup
+.vagrant/
+
+# Binary files
+#---------------------------
+*.rpm
+*.zip
+
+
+### https://raw.github.com/github/gitignore/d67d1cae9a6d1804851a816b15460600eea29a45/Go.gitignore
+
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary, build with `go test -c`
+*.test
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+
