@@ -1,0 +1,15 @@
+# for blogsync settings
+# See also: https://github.com/motemen/blogsync#configuration
+YOUR_BLOG_URI:
+  username: 
+  password: 
+default:
+  local_root: 
+  # for hblog settings
+  draft_root: 
+
+# for hblog settings
+selecotr: 
+    cmd: fzf
+    option: "--multi --cycle --bind=ctrl-u:half-page-up,ctrl-d:half-page-down"
+
