@@ -225,17 +225,17 @@ func main() {
 }
 
 var commandConfig = cli.Command{
-	Name: "config",
-	// Aliases: []string{"c"},
-	Usage:  "Edit config file",
-	Action: cmdConfig,
+	Name:    "config",
+	Aliases: []string{"c"},
+	Usage:   "Edit config file",
+	Action:  cmdConfig,
 }
 
 var commandList = cli.Command{
-	Name: "list",
-	// Aliases: []string{"l"},
-	Usage:  "List entries",
-	Action: cmdList,
+	Name:    "list",
+	Aliases: []string{"l"},
+	Usage:   "List entries",
+	Action:  cmdList,
 }
 
 var commandPull = cli.Command{
@@ -246,16 +246,16 @@ var commandPull = cli.Command{
 }
 
 var commandEdit = cli.Command{
-	Name: "edit",
-	// Aliases: []string{"e"},
-	Usage:  "Edit entries",
-	Action: cmdEdit,
+	Name:    "edit",
+	Aliases: []string{"e"},
+	Usage:   "Edit entries",
+	Action:  cmdEdit,
 }
 
 var commandNew = cli.Command{
-	Name: "new",
-	// Aliases: []string{"n"},
-	Usage: "New entries in draft",
+	Name:    "new",
+	Aliases: []string{"n"},
+	Usage:   "New entries in draft",
 	Description: "Under the draft directly, create a file with the name <title>.md\n   " +
 		"You can post this file with the push command.\n   " +
 		"draft directory is \"config.yaml > default > local_root + draft\"",
@@ -272,10 +272,10 @@ var commandPush = cli.Command{
 }
 
 var commandBrowse = cli.Command{
-	Name: "browse",
-	// Aliases: []string{"b"},
-	Usage:  "Open entries web site with browser",
-	Action: cmdBrowse,
+	Name:    "browse",
+	Aliases: []string{"b"},
+	Usage:   "Open entries web site with browser",
+	Action:  cmdBrowse,
 }
 
 func cmdConfig(c *cli.Context) error {
