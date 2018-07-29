@@ -155,7 +155,7 @@ func (cfg *config) configPath() (string, error) {
 		confPath = filepath.Join(home, ".config", "blogsync", "config.yaml")
 		if !fileExists(confPath) {
 			return "", fmt.Errorf("Error: config file is not exists.\n" +
-				"See also: https://github.com/motemen/blogsync#configuration\n")
+				"See also: https://github.com/humangas/hblog#configuration\n")
 		}
 	}
 
