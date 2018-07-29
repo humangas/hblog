@@ -1,5 +1,6 @@
 vendor/
 dist/
+goxz/
 hblog
 
 ### https://raw.github.com/github/gitignore/d67d1cae9a6d1804851a816b15460600eea29a45/humangas.gitignore
