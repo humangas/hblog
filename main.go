@@ -117,7 +117,7 @@ type config struct {
 		entryroot string
 		draftroot string
 	}
-	selecotr struct {
+	selector struct {
 		cmd    string
 		option string
 	}
@@ -188,9 +188,9 @@ func (cfg *config) load() error {
 	}
 	delete(ymv, "default")
 
-	cfg.selecotr.cmd = ymv["selecotr"].Cmd
-	cfg.selecotr.option = ymv["selecotr"].Option
-	delete(ymv, "selecotr")
+	cfg.selector.cmd = ymv["selector"].Cmd
+	cfg.selector.option = ymv["selector"].Option
+	delete(ymv, "selector")
 
 	// The loop is only once. Because it deleted in the above.
 	for key, v := range ymv {
@@ -361,7 +361,7 @@ func cmdPush(c *cli.Context) error {
 				"Please do \"pull\" or \"new\" command in advance.")
 		}
 
-		b, err = selecotFilePath(bs)
+		b, err = selectFilePath(bs)
 		if err != nil {
 			return err
 		}
@@ -407,7 +407,7 @@ func cmdEdit(c *cli.Context) error {
 			"Please do \"pull\" or \"new\" command in advance.")
 	}
 
-	blog, err := selecotFilePath(bs)
+	blog, err := selectFilePath(bs)
 	if err != nil {
 		return err
 	}
@@ -463,7 +463,7 @@ func cmdBrowse(c *cli.Context) error {
 			"Please do \"pull\" command in advance.")
 	}
 
-	blog, err := selecotFilePath(bs)
+	blog, err := selectFilePath(bs)
 	if err != nil {
 		return err
 	}
@@ -475,7 +475,7 @@ func cmdBrowse(c *cli.Context) error {
 	return open.Run(blog.URL)
 }
 
-func selecotFilePath(blogss ...blogs) (*blog, error) {
+func selectFilePath(blogss ...blogs) (*blog, error) {
 	var cfg config
 	if err := cfg.load(); err != nil {
 		return nil, err
@@ -497,7 +497,7 @@ func selecotFilePath(blogss ...blogs) (*blog, error) {
 
 	var buf bytes.Buffer
 	var cmd *exec.Cmd
-	cmd = exec.Command(cfg.selecotr.cmd, (strings.Split(cfg.selecotr.option, " "))[0:]...)
+	cmd = exec.Command(cfg.selector.cmd, (strings.Split(cfg.selector.option, " "))[0:]...)
 	cmd.Stderr = os.Stderr
 	cmd.Stdout = &buf
 	cmd.Stdin = strings.NewReader(strings.Join(lines, "\n"))

@@ -9,7 +9,7 @@ default:
   draft_root: 
 
 # for hblog settings
-selecotr: 
+selector: 
     cmd: fzf
     option: "--multi --cycle --bind=ctrl-u:half-page-up,ctrl-d:half-page-down"
 

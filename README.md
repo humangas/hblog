@@ -55,7 +55,7 @@ blogsync の Configuration を基本的にそのまま利用します。
 default:
   draft_root: "new" で作成するファイルが格納されるディレクトリ
 
-selecotr: 
+selector: 
     cmd: fzf
     option: "--multi --cycle --bind=ctrl-u:half-page-up,ctrl-d:half-page-down"
 ```
