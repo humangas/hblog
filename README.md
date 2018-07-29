@@ -16,14 +16,14 @@ VERSION:
    0.1.0
 
 COMMANDS:
-     list     List entries
-     new      New entries in draft
-     edit     Edit entries
-     pull     Pull entries from remote
-     push     Push local entries to remote
-     config   Edit config file
-     browse   Open entries web site with browser
-     help, h  Shows a list of commands or help for one command
+     list, l    List entries
+     new, n     New entries in draft
+     edit, e    Edit entries
+     pull       Pull entries from remote
+     push       Push local entries to remote
+     config, c  Edit config file
+     browse, b  Open entries web site with browser
+     help, h    Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
    --help, -h     show help
