@@ -573,33 +573,6 @@ func filterMarkdown(files []string) []string {
 	return newfiles
 }
 
-func draftlist(path string) (blogs, error) {
-	if !fileExists(path) {
-		return nil, nil
-	}
-
-	paths := dirwalk(path)
-	paths = filterMarkdown(paths)
-
-	var list blogs
-	for _, path := range paths {
-		b := &blog{Path: path}
-
-		f, err := os.Stat(path)
-		if err != nil {
-			return nil, err
-		}
-
-		b.Date = f.ModTime()
-		_, b.Title = filepath.Split(path)
-		b.Status = "draft "
-
-		list = append(list, b)
-	}
-
-	return list, nil
-}
-
 func bloglist(cfg *config) (blogs, error) {
 	articlePaths := []string{cfg.defaultset.entryroot, cfg.defaultset.draftroot}
 
