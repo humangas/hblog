@@ -12,8 +12,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/Songmu/prompter"
 	"github.com/fatih/color"
-	tty "github.com/mattn/go-tty"
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/skratchdot/open-golang/open"
 	"github.com/urfave/cli"
@@ -371,16 +371,13 @@ func cmdPush(c *cli.Context) error {
 		}
 	}
 
-	var answer bool
-	answer, err = ask(color.RedString("Push? (yes/No)  \"%s\"", b.Title))
-	if answer == false || err != nil {
-		return err
+	if !prompter.YesNo(color.RedString(fmt.Sprintf("Push? %s", b.Title)), false) {
+		return nil
 	}
 
 	if b.isDraft() {
 		err = runBlogsync("post", "--title", b.Title, cfg.userInfo.blogID, b.Path)
-		answer, err = ask(color.RedString("Delete? (yes/No)  \"%s\"", b.Path))
-		if answer {
+		if prompter.YesNo(color.RedString(fmt.Sprintf("Delete? %s", b.Path)), false) {
 			if err := os.Remove(b.Path); err != nil {
 				return err
 			}
@@ -597,36 +594,6 @@ func bloglist(cfg *config) (blogs, error) {
 func fileExists(filename string) bool {
 	_, err := os.Stat(filename)
 	return err == nil
-}
-
-func ask(prompt string) (bool, error) {
-	fmt.Print(prompt + ": ")
-
-	t, err := tty.Open()
-	if err != nil {
-		return false, err
-	}
-	defer t.Close()
-
-	var runes []rune
-	for {
-		r, err := t.ReadRune()
-		if err != nil {
-			return false, err
-		}
-
-		fmt.Print(string(r))
-		// TODO: signal: interrupt で正しくおわるようにする。終了はするけど動きがおかしい。（tigでコミットしたあとにおかしくなった）
-		// TODO: backspaceを有効にする
-		// Enter key = 13
-		if r == 13 {
-			break
-		}
-		runes = append(runes, r)
-	}
-	fmt.Println()
-
-	return string(runes) == "yes" || string(runes) == "YES", nil
 }
 
 func fileWithoutExt(path string) string {
