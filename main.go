@@ -47,6 +47,62 @@ func (b *blog) isDraft() bool {
 	return b.Status == "draft "
 }
 
+type config struct {
+	userInfo struct {
+		blogID   string
+		username string
+		password string
+	}
+	defaultset struct {
+		localroot string
+		entryroot string
+		draftroot string
+	}
+	selector struct {
+		cmd    string
+		option string
+	}
+}
+
+type ymlvalues struct {
+	Username  string `yaml:"username"`
+	Password  string `yaml:"password"`
+	LocalRoot string `yaml:"local_root"`
+	DraftRoot string `yaml:"draft_root"`
+	Cmd       string `yaml:"cmd"`
+	Option    string `yaml:"option"`
+}
+
+func editor() string {
+	editor := os.Getenv("EDITOR")
+	if editor == "" {
+		editor = "vim"
+	}
+	return editor
+}
+
+func (cfg *config) configPath() (string, error) {
+	pwd, err := os.Getwd()
+	if err != nil {
+		return "", err
+	}
+
+	confPath := filepath.Join(pwd, "blogsync.yaml")
+	if !fileExists(confPath) {
+		home, err := homedir.Dir()
+		if err != nil {
+			return "", err
+		}
+		confPath = filepath.Join(home, ".config", "blogsync", "config.yaml")
+		if !fileExists(confPath) {
+			return "", fmt.Errorf("Error: config file is not exists.\n" +
+				"See also: https://github.com/humangas/hblog#configuration\n")
+		}
+	}
+
+	return confPath, nil
+}
+
 func genPostedBlog(cfg *config, path string) (*blog, error) {
 	b := &blog{Path: path}
 
@@ -104,62 +160,6 @@ func genPostedBlog(cfg *config, path string) (*blog, error) {
 	}
 
 	return b, nil
-}
-
-type config struct {
-	userInfo struct {
-		blogID   string
-		username string
-		password string
-	}
-	defaultset struct {
-		localroot string
-		entryroot string
-		draftroot string
-	}
-	selector struct {
-		cmd    string
-		option string
-	}
-}
-
-type ymlvalues struct {
-	Username  string `yaml:"username"`
-	Password  string `yaml:"password"`
-	LocalRoot string `yaml:"local_root"`
-	DraftRoot string `yaml:"draft_root"`
-	Cmd       string `yaml:"cmd"`
-	Option    string `yaml:"option"`
-}
-
-func editor() string {
-	editor := os.Getenv("EDITOR")
-	if editor == "" {
-		editor = "vim"
-	}
-	return editor
-}
-
-func (cfg *config) configPath() (string, error) {
-	pwd, err := os.Getwd()
-	if err != nil {
-		return "", err
-	}
-
-	confPath := filepath.Join(pwd, "blogsync.yaml")
-	if !fileExists(confPath) {
-		home, err := homedir.Dir()
-		if err != nil {
-			return "", err
-		}
-		confPath = filepath.Join(home, ".config", "blogsync", "config.yaml")
-		if !fileExists(confPath) {
-			return "", fmt.Errorf("Error: config file is not exists.\n" +
-				"See also: https://github.com/humangas/hblog#configuration\n")
-		}
-	}
-
-	return confPath, nil
 }
 
 // TODO 現状一つのブログサイトにしか対応してない。一つしか運用しないので更新する予定はない。
