@@ -204,6 +204,36 @@ func (cfg *config) load() error {
 	return nil
 }
 
+func (cfg *config) check() error {
+	var errmsg []string
+	if cfg.userInfo.blogID == "" {
+		errmsg = append(errmsg, "- Not found: blogID")
+	}
+	if cfg.userInfo.username == "" {
+		errmsg = append(errmsg, "- Not found: blogID > username")
+	}
+	if cfg.userInfo.password == "" {
+		errmsg = append(errmsg, "- Not found: blogID > password")
+	}
+	if cfg.defaultset.localroot == "" {
+		errmsg = append(errmsg, "- Not found: default > local_root")
+	}
+	if cfg.defaultset.draftroot == "" {
+		errmsg = append(errmsg, "- Not found: default > draft_root")
+	}
+	if cfg.selector.cmd == "" {
+		errmsg = append(errmsg, "- Not found: selector > cmd")
+	}
+	if cfg.selector.option == "" {
+		errmsg = append(errmsg, "- Not found: selector > option")
+	}
+
+	if len(errmsg) > 0 {
+		return fmt.Errorf("\nconfig error:\n%s", strings.Join(errmsg, "\n"))
+	}
+	return nil
+}
+
 func main() {
 	app := cli.NewApp()
 	app.Name = "hblog"
@@ -302,6 +332,9 @@ func cmdList(c *cli.Context) error {
 	if err := cfg.load(); err != nil {
 		return err
 	}
+	if err := cfg.check(); err != nil {
+		return err
+	}
 
 	bs, err := bloglist(&cfg)
 	if err != nil {
@@ -328,6 +361,9 @@ func cmdPull(c *cli.Context) error {
 	if err := cfg.load(); err != nil {
 		return err
 	}
+	if err := cfg.check(); err != nil {
+		return err
+	}
 	// TODO: 本体がhomedir.Expand()してないのでパスはフルパスにしている
 	// TODO: 削除した記事がローカルに残るので、差分比較して、無いものはローカルからも削除する
 	return runBlogsync("pull", cfg.userInfo.blogID)
@@ -336,6 +372,9 @@ func cmdPull(c *cli.Context) error {
 func cmdPush(c *cli.Context) error {
 	var cfg config
 	if err := cfg.load(); err != nil {
+		return err
+	}
+	if err := cfg.check(); err != nil {
 		return err
 	}
 
@@ -394,6 +433,9 @@ func cmdEdit(c *cli.Context) error {
 	if err := cfg.load(); err != nil {
 		return err
 	}
+	if err := cfg.check(); err != nil {
+		return err
+	}
 
 	bs, err := bloglist(&cfg)
 	if err != nil {
@@ -426,6 +468,9 @@ func cmdNew(c *cli.Context) error {
 	if err := cfg.load(); err != nil {
 		return err
 	}
+	if err := cfg.check(); err != nil {
+		return err
+	}
 
 	if !c.Args().Present() {
 		cli.ShowCommandHelp(c, "new")
@@ -448,6 +493,9 @@ func cmdNew(c *cli.Context) error {
 func cmdBrowse(c *cli.Context) error {
 	var cfg config
 	if err := cfg.load(); err != nil {
+		return err
+	}
+	if err := cfg.check(); err != nil {
 		return err
 	}
 
