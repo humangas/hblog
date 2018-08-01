@@ -1,4 +1,6 @@
 # hblog
+[![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
+[![OS macOS](https://img.shields.io/badge/OS-macOS-blue.svg)](OS)  
 はてなブログ用のCLIクライアントです。  
 内部で [motemen/blogsync](https://github.com/motemen/blogsync) を利用しています。
 これに、new, list, edit 機能などを追加しています。
