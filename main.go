@@ -491,8 +491,9 @@ func cmdNew(c *cli.Context) error {
 }
 
 func cmdBrowse(c *cli.Context) error {
+	var err error
 	var cfg config
-	if err := cfg.load(); err != nil {
+	if err = cfg.load(); err != nil {
 		return err
 	}
 	if err := cfg.check(); err != nil {
@@ -517,7 +518,13 @@ func cmdBrowse(c *cli.Context) error {
 		return nil
 	}
 
-	return open.Run(blog.URL)
+	if blog.isDraft() {
+		err = open.Run(cfg.defaultset.draftroot)
+	} else {
+		err = open.Run(blog.URL)
+	}
+
+	return err
 }
 
 func selectFilePath(blogss ...blogs) (*blog, error) {
