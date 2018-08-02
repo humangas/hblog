@@ -7,7 +7,7 @@
 
 
 ## Usage
-```bash
+```
 NAME:
    hblog - CLI client for Hatena blog
 
@@ -15,7 +15,7 @@ USAGE:
    hblog [global options] command [<arguments>]
 
 VERSION:
-   0.1.0
+   0.1.2
 
 COMMANDS:
      list, l    List entries
