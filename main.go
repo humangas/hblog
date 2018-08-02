@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -366,7 +367,7 @@ func cmdPull(c *cli.Context) error {
 	}
 	// TODO: 本体がhomedir.Expand()してないのでパスはフルパスにしている
 	// TODO: 削除した記事がローカルに残るので、差分比較して、無いものはローカルからも削除する
-	return runBlogsync("pull", cfg.userInfo.blogID)
+	return runBlogsync("pull", os.Stdin, os.Stdout, cfg.userInfo.blogID)
 }
 
 func cmdPush(c *cli.Context) error {
@@ -415,14 +416,19 @@ func cmdPush(c *cli.Context) error {
 	}
 
 	if b.isDraft() {
-		err = runBlogsync("post", "--title", b.Title, cfg.userInfo.blogID, b.Path)
+		f, err := os.Open(b.Path)
+		if err != nil {
+			return err
+		}
+		defer f.Close()
+		err = runBlogsync("post", f, os.Stdout, "--title", b.Title, cfg.userInfo.blogID, b.Path)
 		if prompter.YesNo(color.RedString(fmt.Sprintf("Delete? %s", b.Path)), false) {
 			if err := os.Remove(b.Path); err != nil {
 				return err
 			}
 		}
 	} else {
-		err = runBlogsync("push", b.Path)
+		err = runBlogsync("push", os.Stdin, os.Stdout, b.Path)
 	}
 
 	return err
@@ -577,21 +583,12 @@ func selectFilePath(blogss ...blogs) (*blog, error) {
 	return v, nil
 }
 
-func runBlogsync(subcommand string, args ...string) error {
+func runBlogsync(subcommand string, r io.Reader, w io.Writer, args ...string) error {
 	var cmd *exec.Cmd
 	cmd = exec.Command(BLOGSYNC, append([]string{subcommand}, args...)[0:]...)
 	cmd.Stderr = os.Stderr
-	cmd.Stdout = os.Stdout
-	if subcommand == "post" {
-		f, err := os.Open(args[len(args)-1])
-		if err != nil {
-			return err
-		}
-		defer f.Close()
-		cmd.Stdin = f
-	} else {
-		cmd.Stdin = os.Stdin
-	}
+	cmd.Stdout = w
+	cmd.Stdin = r
 
 	return cmd.Run()
 }
