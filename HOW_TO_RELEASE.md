@@ -4,24 +4,15 @@ How to release a new version.
 
 ## Release
 
-Update VERSION
 ```
+# Update VERSION
 $ vim version.go
-```
 
-Update README(usage etc)
-```
+# Update README(usage etc)
 $ vim README.md
-```
 
-Build
-```
-$ make build
-```
-
-Release
-```
-$ make upload
+# Release
+$ make release
 ```
 
 
