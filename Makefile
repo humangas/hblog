@@ -24,11 +24,13 @@ setup:
 deps: setup
 	dep ensure
 
-## Build source code to binary file
 build:
 	goxz -pv=v$(VERSION) -os darwin -d=./dist/v$(VERSION)
 
-## Release to GitHub releases
 upload:
 	ghr v$(VERSION) dist/v$(VERSION)
 
+## Release to GitHub releases
+release:
+	@make build
+	@make upload
