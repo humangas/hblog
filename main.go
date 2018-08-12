@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"net/http"
+	"net/url"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -16,6 +18,8 @@ import (
 	"github.com/Songmu/prompter"
 	"github.com/fatih/color"
 	homedir "github.com/mitchellh/go-homedir"
+	"github.com/motemen/blogsync/atom"
+	wsse "github.com/motemen/go-wsse"
 	"github.com/skratchdot/open-golang/open"
 	"github.com/urfave/cli"
 	yaml "gopkg.in/yaml.v2"
@@ -250,6 +254,7 @@ func main() {
 		commandPush,
 		commandConfig,
 		commandBrowse,
+		commandSync,
 	}
 
 	os.Exit(returnCode(app.Run(os.Args)))
@@ -309,6 +314,13 @@ var commandBrowse = cli.Command{
 	Action:  cmdBrowse,
 }
 
+var commandSync = cli.Command{
+	Name:    "sync",
+	Aliases: []string{"s"},
+	Usage:   "Synchronize entries with remote",
+	Action:  cmdSync,
+}
+
 func cmdConfig(c *cli.Context) error {
 	var cfg config
 	if err := cfg.load(); err != nil {
@@ -366,8 +378,103 @@ func cmdPull(c *cli.Context) error {
 		return err
 	}
 	// TODO: 本体がhomedir.Expand()してないのでパスはフルパスにしている
-	// TODO: 削除した記事がローカルに残るので、差分比較して、無いものはローカルからも削除する
 	return runBlogsync("pull", os.Stdin, os.Stdout, cfg.userInfo.blogID)
+}
+
+func entriesLink(cfg *config) ([]string, error) {
+	entryURL := fmt.Sprintf("https://blog.hatena.ne.jp/%s/%s/atom/entry", cfg.userInfo.username, cfg.userInfo.blogID)
+	client := &atom.Client{
+		Client: &http.Client{
+			Transport: &wsse.Transport{
+				Username: cfg.userInfo.username,
+				Password: cfg.userInfo.password,
+			},
+		},
+	}
+
+	var links []string
+	for {
+		feed, err := client.GetFeed(entryURL)
+		if err != nil {
+			return nil, err
+		}
+
+		for _, ae := range feed.Entries {
+			alternateLink := ae.Links.Find("alternate")
+			if alternateLink == nil {
+				return nil, fmt.Errorf("Could not find link[rel=alternate]")
+			}
+
+			u, err := url.Parse(alternateLink.Href)
+			if err != nil {
+				return nil, err
+			}
+
+			links = append(links, u.String())
+		}
+
+		nextLink := feed.Links.Find("next")
+		if nextLink == nil {
+			break
+		}
+		entryURL = nextLink.Href
+	}
+
+	return links, nil
+}
+
+func cmdSync(c *cli.Context) error {
+	var cfg config
+	if err := cfg.load(); err != nil {
+		return err
+	}
+	if err := cfg.check(); err != nil {
+		return err
+	}
+
+	bs, err := bloglist(&cfg)
+	if err != nil {
+		return err
+	}
+	if bs == nil {
+		return fmt.Errorf("Can not find files. " +
+			"Please do \"pull\" or \"new\" command in advance.")
+	}
+
+	links, err := entriesLink(&cfg)
+	if err != nil {
+		return err
+	}
+
+	var delfiles []string
+LABEL:
+	for _, b := range bs {
+		for i, l := range links {
+			if b.URL == l {
+				links = append(links[:i], links[i+1:]...)
+				continue LABEL
+			}
+		}
+		if !b.isDraft() {
+			delfiles = append(delfiles, b.Path)
+		}
+	}
+
+	for _, v := range delfiles {
+		if err := os.Remove(v); err != nil {
+			return err
+		}
+		fmt.Printf("Delete file: %s\n", v)
+	}
+
+	if len(links) > 0 {
+		fmt.Println("Run \"pull\" command")
+		if err := cmdPull(c); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func cmdPush(c *cli.Context) error {
