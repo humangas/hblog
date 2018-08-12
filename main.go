@@ -381,48 +381,6 @@ func cmdPull(c *cli.Context) error {
 	return runBlogsync("pull", os.Stdin, os.Stdout, cfg.userInfo.blogID)
 }
 
-func entriesLink(cfg *config) ([]string, error) {
-	entryURL := fmt.Sprintf("https://blog.hatena.ne.jp/%s/%s/atom/entry", cfg.userInfo.username, cfg.userInfo.blogID)
-	client := &atom.Client{
-		Client: &http.Client{
-			Transport: &wsse.Transport{
-				Username: cfg.userInfo.username,
-				Password: cfg.userInfo.password,
-			},
-		},
-	}
-
-	var links []string
-	for {
-		feed, err := client.GetFeed(entryURL)
-		if err != nil {
-			return nil, err
-		}
-
-		for _, ae := range feed.Entries {
-			alternateLink := ae.Links.Find("alternate")
-			if alternateLink == nil {
-				return nil, fmt.Errorf("Could not find link[rel=alternate]")
-			}
-
-			u, err := url.Parse(alternateLink.Href)
-			if err != nil {
-				return nil, err
-			}
-
-			links = append(links, u.String())
-		}
-
-		nextLink := feed.Links.Find("next")
-		if nextLink == nil {
-			break
-		}
-		entryURL = nextLink.Href
-	}
-
-	return links, nil
-}
-
 func cmdSync(c *cli.Context) error {
 	var cfg config
 	if err := cfg.load(); err != nil {
@@ -748,6 +706,48 @@ func bloglist(cfg *config) (blogs, error) {
 	}
 
 	return list, nil
+}
+
+func entriesLink(cfg *config) ([]string, error) {
+	entryURL := fmt.Sprintf("https://blog.hatena.ne.jp/%s/%s/atom/entry", cfg.userInfo.username, cfg.userInfo.blogID)
+	client := &atom.Client{
+		Client: &http.Client{
+			Transport: &wsse.Transport{
+				Username: cfg.userInfo.username,
+				Password: cfg.userInfo.password,
+			},
+		},
+	}
+
+	var links []string
+	for {
+		feed, err := client.GetFeed(entryURL)
+		if err != nil {
+			return nil, err
+		}
+
+		for _, ae := range feed.Entries {
+			alternateLink := ae.Links.Find("alternate")
+			if alternateLink == nil {
+				return nil, fmt.Errorf("Could not find link[rel=alternate]")
+			}
+
+			u, err := url.Parse(alternateLink.Href)
+			if err != nil {
+				return nil, err
+			}
+
+			links = append(links, u.String())
+		}
+
+		nextLink := feed.Links.Find("next")
+		if nextLink == nil {
+			break
+		}
+		entryURL = nextLink.Href
+	}
+
+	return links, nil
 }
 
 func fileExists(filename string) bool {
