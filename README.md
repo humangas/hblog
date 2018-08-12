@@ -15,7 +15,7 @@ USAGE:
    hblog [global options] command [<arguments>]
 
 VERSION:
-   0.1.2
+   0.2.0
 
 COMMANDS:
      list, l    List entries
@@ -25,6 +25,7 @@ COMMANDS:
      push       Push local entries to remote
      config, c  Edit config file
      browse, b  Open entries web site with browser
+     sync, s    Synchronize entries with remote
      help, h    Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
