@@ -15,7 +15,7 @@ USAGE:
    hblog [global options] command [<arguments>]
 
 VERSION:
-   0.2.0
+   0.2.1
 
 COMMANDS:
      list, l    List entries
@@ -25,7 +25,6 @@ COMMANDS:
      push       Push local entries to remote
      config, c  Edit config file
      browse, b  Open entries web site with browser
-     sync, s    Synchronize entries with remote
      help, h    Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
@@ -34,7 +33,7 @@ GLOBAL OPTIONS:
 
 ```
 
-pull, push は、blogsync の同機能を呼び出しています。
+pull, push は、内部で blogsync の同機能を呼び出しています。
 
 
 
