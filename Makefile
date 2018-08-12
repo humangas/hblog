@@ -2,7 +2,7 @@ VERSION = $(shell gobump show -r)
 
 .DEFAULT_GOAL := help
 
-.PHONY: all help init setup deps
+.PHONY: all init help setup deps build upload release
 
 all:
 
