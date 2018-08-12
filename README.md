@@ -15,13 +15,13 @@ USAGE:
    hblog [global options] command [<arguments>]
 
 VERSION:
-   0.2.1
+   0.2.2
 
 COMMANDS:
      list, l    List entries
      new, n     New entries in draft
      edit, e    Edit entries
-     pull       Pull entries from remote
+     pull, p    Pull entries from remote
      push       Push local entries to remote
      config, c  Edit config file
      browse, b  Open entries web site with browser
