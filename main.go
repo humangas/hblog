@@ -254,7 +254,6 @@ func main() {
 		commandPush,
 		commandConfig,
 		commandBrowse,
-		commandSync,
 	}
 
 	os.Exit(returnCode(app.Run(os.Args)))
@@ -314,13 +313,6 @@ var commandBrowse = cli.Command{
 	Action:  cmdBrowse,
 }
 
-var commandSync = cli.Command{
-	Name:    "sync",
-	Aliases: []string{"s"},
-	Usage:   "Synchronize entries with remote",
-	Action:  cmdSync,
-}
-
 func cmdConfig(c *cli.Context) error {
 	var cfg config
 	if err := cfg.load(); err != nil {
@@ -377,16 +369,9 @@ func cmdPull(c *cli.Context) error {
 	if err := cfg.check(); err != nil {
 		return err
 	}
-	// TODO: 本体がhomedir.Expand()してないのでパスはフルパスにしている
-	return runBlogsync("pull", os.Stdin, os.Stdout, cfg.userInfo.blogID)
-}
 
-func cmdSync(c *cli.Context) error {
-	var cfg config
-	if err := cfg.load(); err != nil {
-		return err
-	}
-	if err := cfg.check(); err != nil {
+	// TODO: 本体がhomedir.Expand()してないのでパスはフルパスにしている
+	if err := runBlogsync("pull", os.Stdin, os.Stdout, cfg.userInfo.blogID); err != nil {
 		return err
 	}
 
@@ -395,8 +380,7 @@ func cmdSync(c *cli.Context) error {
 		return err
 	}
 	if bs == nil {
-		return fmt.Errorf("Can not find files. " +
-			"Please do \"pull\" or \"new\" command in advance.")
+		return fmt.Errorf("Can not find files")
 	}
 
 	links, err := entriesLink(&cfg)
@@ -423,13 +407,6 @@ LABEL:
 			return err
 		}
 		fmt.Printf("Delete file: %s\n", v)
-	}
-
-	if len(links) > 0 {
-		fmt.Println("Run \"pull\" command")
-		if err := cmdPull(c); err != nil {
-			return err
-		}
 	}
 
 	return nil
