@@ -2,7 +2,7 @@ VERSION = $(shell gobump show -r)
 
 .DEFAULT_GOAL := help
 
-.PHONY: all init help setup deps build upload release
+.PHONY: all init help setup deps build upload release install
 
 all:
 
@@ -34,3 +34,8 @@ upload:
 release:
 	@make build
 	@make upload
+	
+## Install/Upgrade hblog
+install:
+	go get -u github.com/motemen/blogsync
+	go get -u github.com/humangas/hblog
