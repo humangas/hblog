@@ -274,10 +274,10 @@ var commandList = cli.Command{
 }
 
 var commandPull = cli.Command{
-	Name: "pull",
-	// Aliases: []string{"pl"},
-	Usage:  "Pull entries from remote",
-	Action: cmdPull,
+	Name:    "pull",
+	Aliases: []string{"p"},
+	Usage:   "Pull entries from remote",
+	Action:  cmdPull,
 }
 
 var commandEdit = cli.Command{
@@ -299,8 +299,7 @@ var commandNew = cli.Command{
 }
 
 var commandPush = cli.Command{
-	Name: "push",
-	// Aliases: []string{"ps"},
+	Name:      "push",
 	Usage:     "Push local entries to remote",
 	ArgsUsage: "[path]",
 	Action:    cmdPush,
